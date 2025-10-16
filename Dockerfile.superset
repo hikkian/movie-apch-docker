@@ -1,0 +1,12 @@
+FROM apache/superset:latest
+
+USER root
+
+# Pillow иногда нужен для экспорта графиков
+RUN pip install --no-cache-dir Pillow
+
+# ✅ Кладём конфиг Superset в pythonpath
+COPY superset_config.py /app/pythonpath/superset_config.py
+
+USER superset
+ENV SUPERSET_HOME=/app/superset_home

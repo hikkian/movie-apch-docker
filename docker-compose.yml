@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  superset:
+    build:
+      context: .
+      dockerfile: Dockerfile.superset
+    container_name: superset1
+    ports:
+      - "9000:8088"
+    environment:
+      - SUPERSET_SECRET_KEY=your-secure-secret-key
+      - SUPERSET_DATABASE_URL=sqlite:////app/sqlite_data/movies.db
+      - SUPERSET_HOME=/app/superset_home
+    volumes:
+      - ./superset:/app/superset
+      - ./superset-frontend:/app/superset-frontend
+      - ./superset_home:/app/superset_home
+      - ./sqlite_data:/app/sqlite_data
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: movies_app
+    volumes:
+      - ./datasets:/datasets
+      - ./sqlite_data:/app/sqlite_data
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
